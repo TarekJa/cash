@@ -5,25 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>صندوقي اليومي</title>
 
-  <!-- PWA basics -->
-  <link rel="manifest" href="data:application/manifest+json,{
-    'name': 'صندوقي اليومي',
-    'short_name': 'صندوقي',
-    'start_url': '.',
-    'display': 'standalone',
-    'background_color': '#020617',
-    'theme_color': '#10b981',
-    'icons': [
-      {'src': 'android-chrome-192x192.png', 'sizes': '192x192', 'type': 'image/png'},
-      {'src': 'android-chrome-512x512.png', 'sizes': '512x512', 'type': 'image/png'},
-      {'src': 'apple-touch-icon.png', 'sizes': '180x180', 'type': 'image/png'},
-      {'src': 'favicon-16x16.png', 'sizes': '16x16', 'type': 'image/png'},
-      {'src': 'favicon-32x32.png', 'sizes': '32x32', 'type': 'image/png'},
-      {'src': 'favicon-192.png', 'sizes': '192x192', 'type': 'image/png'},
-      {'src': 'favicon-512.png', 'sizes': '512x512', 'type': 'image/png'},
-      {'src': 'favicon.ico', 'sizes': '64x64', 'type': 'image/x-icon'}
-    ]
-  }">
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" href="favicon.ico">
 
   <meta name="theme-color" content="#10b981">
 
@@ -98,7 +87,7 @@
           <p class="text-emerald-400/90 text-base">+1500 يومياً</p>
         </div>
       </div>
-      <button onclick="resetAll()" class="text-red-400/70 hover:text-red-400 flex items-center gap-2 text-sm">
+      <button onclick="resetAll()" class="text-red-400/70 hover:text-red-400 flex items-center gap-2 text-sm no-print">
         <i class="fa-solid fa-rotate-right"></i>
         إعادة تعيين
       </button>
@@ -129,7 +118,7 @@
         <div>
           <label class="block text-zinc-300 mb-2 text-lg">المبلغ</label>
           <div class="relative">
-            <input id="amount" type="number" placeholder="0" class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none transition-all force-latin-digits">
+            <input id="amount" type="number" min="1" step="1" placeholder="0" class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none transition-all force-latin-digits">
             <div class="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">وحدة</div>
           </div>
         </div>
@@ -148,7 +137,7 @@
     <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-12">
       <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3 no-print">
         <i class="fa-solid fa-chart-line text-blue-400"></i>
-        تقرير الفترة
+        تقرير الفترة (من الشيت)
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6 no-print">
@@ -177,7 +166,7 @@
       </div>
     </section>
 
-    <!-- History -->
+    <!-- History (local only) -->
     <section class="no-print">
       <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3 px-1">
         <i class="fa-solid fa-clock-rotate-left text-blue-400"></i>
@@ -188,7 +177,7 @@
 
   </div>
 
-  <!-- Toast -->
+  <!-- Toast Notification -->
   <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[300px] justify-center no-print">
     <i class="fa-solid fa-circle-check text-xl"></i>
     <span id="toastMsg"></span>
@@ -196,16 +185,21 @@
 
 <script>
 // ────────────────────────────────────────────────
+// المتغيرات العامة
+// ────────────────────────────────────────────────
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeZhOfSMqt7hCceyWWtHePfCahIm-ZMkMexxtUpw_HtCXVJ-xj9bga2rjO9CXUJ0EJjQ/exec";
 
 let balance = 0;
 let lastDay = new Date().toISOString().slice(0,10);
-let records = [];
+let records = []; // local history only
 
 const STORAGE_KEY = "myDailyBox-v2026-debt";
 
 function $(id) { return document.getElementById(id); }
 
+// ────────────────────────────────────────────────
+// تحميل البيانات المحلية + تطبيق المكافأة اليومية
+// ────────────────────────────────────────────────
 function loadData() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -221,7 +215,7 @@ function loadData() {
 }
 
 function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({balance, lastDay, records}));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ balance, lastDay, records }));
 }
 
 function applyDailyBonus() {
@@ -230,7 +224,7 @@ function applyDailyBonus() {
 
   const prev = new Date(lastDay);
   const curr = new Date(today);
-  const diff = Math.floor((curr - prev) / 864e5);
+  const diff = Math.floor((curr - prev) / 86400000);
 
   if (diff > 0) {
     const bonus = diff * 1500;
@@ -242,40 +236,22 @@ function applyDailyBonus() {
   saveData();
 }
 
+// ────────────────────────────────────────────────
+// عرض الرصيد + الشارة الملونة
+// ────────────────────────────────────────────────
 function updateBalanceUI() {
-  const displayValue = balance.toLocaleString('en-US');
-  $('balance').textContent = displayValue;
+  $('balance').textContent = balance.toLocaleString('en-US');
 
   let gradient, statusText, badgeClass;
 
-  if (balance >= 40000) {
-    gradient = "from-emerald-700 to-emerald-500";
-    statusText = "ممتاز";
-    badgeClass = "bg-emerald-600/40 text-emerald-100 border border-emerald-500/50";
-  }
-  else if (balance >= 20000) {
-    gradient = "from-emerald-600 to-emerald-400";
-    statusText = "جيد جداً";
-    badgeClass = "bg-emerald-500/30 text-emerald-100 border border-emerald-400/40";
-  }
-  else if (balance >= 8000) {
-    gradient = "from-amber-600 to-amber-400";
-    statusText = "متوسط";
-    badgeClass = "bg-amber-500/30 text-amber-100 border border-amber-400/40";
-  }
-  else if (balance >= 0) {
-    gradient = "from-red-700 to-red-500";
-    statusText = "منخفض";
-    badgeClass = "bg-red-600/40 text-red-100 border border-red-500/50";
-  }
-  else {
-    gradient = "from-rose-900 to-rose-700";
-    statusText = "في دين";
-    badgeClass = "bg-rose-800/60 text-rose-100 border border-rose-600 animate-pulse";
-  }
+  if      (balance >= 40000) { gradient = "from-emerald-700 to-emerald-500"; statusText = "ممتاز";    badgeClass = "bg-emerald-600/40 text-emerald-100 border border-emerald-500/50"; }
+  else if (balance >= 20000) { gradient = "from-emerald-600 to-emerald-400"; statusText = "جيد جداً"; badgeClass = "bg-emerald-500/30 text-emerald-100 border border-emerald-400/40"; }
+  else if (balance >=  8000) { gradient = "from-amber-600   to-amber-400";   statusText = "متوسط";    badgeClass = "bg-amber-500/30 text-amber-100 border border-amber-400/40"; }
+  else if (balance >=     0) { gradient = "from-red-700    to-red-500";     statusText = "منخفض";    badgeClass = "bg-red-600/40 text-red-100 border border-red-500/50"; }
+  else                       { gradient = "from-rose-900   to-rose-700";    statusText = "في دين";    badgeClass = "bg-rose-800/60 text-rose-100 border border-rose-600 animate-pulse"; }
 
   $('balanceCard').style.background = `linear-gradient(135deg, ${gradient})`;
-  $('glow').style.background = balance < 0 
+  $('glow').style.background = balance < 0
     ? `radial-gradient(circle at 50% 30%, rgba(244,63,94,0.35), transparent 70%)`
     : `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%)`;
 
@@ -283,9 +259,14 @@ function updateBalanceUI() {
   $('statusBadge').className = `mt-8 inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium ${badgeClass}`;
 }
 
+// ────────────────────────────────────────────────
+// عرض السجل المحلي
+// ────────────────────────────────────────────────
 function renderHistory() {
   const cont = $('historyList');
-  cont.innerHTML = records.length ? "" : '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات بعد...</div>';
+  cont.innerHTML = records.length
+    ? ""
+    : '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات بعد...</div>';
 
   records.forEach((op, i) => {
     const isIncome = op.type === "income";
@@ -312,45 +293,44 @@ function renderAll() {
   renderHistory();
 }
 
+// ────────────────────────────────────────────────
+// إضافة عملية جديدة (محلي + محاولة إرسال للشيت)
+// ────────────────────────────────────────────────
 async function addOperation(isExpense) {
-  const desc = $('desc').value.trim();
+  const desc   = $('desc').value.trim();
   const amount = Number($('amount').value);
 
-  if (!desc) return highlight($('desc'));
+  if (!desc)   return highlight($('desc'));
   if (!amount || amount <= 0) return highlight($('amount'));
 
   const operationDate = new Date().toISOString();
 
-  const payload = {
-    type: isExpense ? "expense" : "income",
-    amount: amount,
-    desc: desc,
-    date: operationDate
-  };
-
-  // محاولة إرسال إلى Google Sheet (no-cors + text/plain)
+  // محاولة حفظ في Google Sheet
   try {
     await fetch(SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        type: isExpense ? "expense" : "income",
+        amount: amount,
+        desc: desc,
+        date: operationDate
+      })
     });
-    // لا نستطيع قراءة الرد بسبب no-cors، لكن العملية غالباً ناجحة
+    // لا نستطيع قراءة الرد → نعتمد على نجاح الطلب
   } catch (err) {
-    console.error("فشل إرسال العملية إلى الشيت:", err);
-    showToast("تم حفظ العملية محلياً فقط (مشكلة اتصال بالشيت)", true);
+    console.warn("فشل الاتصال بالشيت", err);
+    showToast("تم الحفظ محلياً فقط (مشكلة اتصال)", true);
   }
 
-  // حفظ محلي (للسرعة والعرض)
+  // حفظ وعرض محلي
   const dateStr = new Date().toLocaleString('ar-EG', {
     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
 
   records.unshift({
-    type: payload.type,
+    type: isExpense ? "expense" : "income",
     amount,
     desc,
     date: dateStr
@@ -364,13 +344,17 @@ async function addOperation(isExpense) {
   $('desc').value = "";
   $('amount').value = "";
 
-  showToast(isExpense 
-    ? `تم خصم ${amount.toLocaleString('en-US')} ✓` 
+  showToast(isExpense
+    ? `تم خصم ${amount.toLocaleString('en-US')} ✓`
     : `تم إيداع ${amount.toLocaleString('en-US')} ✓`);
 }
 
+// ────────────────────────────────────────────────
+// حذف عملية محلية فقط
+// ────────────────────────────────────────────────
 function deleteOp(index) {
-  if (!confirm("حذف العملية؟ (لن يحذف من الشيت)")) return;
+  if (!confirm("حذف العملية؟ (لن يؤثر على الشيت)")) return;
+
   const op = records[index];
   balance += op.type === "income" ? -op.amount : op.amount;
   records.splice(index, 1);
@@ -379,6 +363,86 @@ function deleteOp(index) {
   showToast("تم الحذف محلياً وتصحيح الرصيد");
 }
 
+// ────────────────────────────────────────────────
+// جلب التقرير من Google Sheet
+// ────────────────────────────────────────────────
+async function showReport() {
+  const from = $('dateFrom').value;
+  const to   = $('dateTo').value;
+
+  if (!from || !to) {
+    return showToast("يرجى تحديد تاريخ البداية والنهاية", true);
+  }
+
+  try {
+    const res = await fetch(`${SCRIPT_URL}?from=${from}&to=${to}`);
+    const data = await res.json();
+
+    if (data.status === "error") {
+      showToast(data.message || "خطأ في جلب البيانات", true);
+      return;
+    }
+
+    let html = data.totalRows
+      ? ''
+      : '<p class="text-center text-xl text-gray-600 py-12">لا توجد عمليات في الفترة المحددة</p>';
+
+    if (data.totalRows > 0) {
+      html = `
+        <h2 class="text-2xl font-bold text-center mb-6">تقرير الصندوق<br><small class="text-gray-600">${from} ← ${to}</small></h2>
+        <table class="w-full border-collapse text-sm mb-8">
+          <thead><tr class="bg-gray-200">
+            <th class="p-3 border">التاريخ</th>
+            <th class="p-3 border">الوصف</th>
+            <th class="p-3 border text-right">إيداع</th>
+            <th class="p-3 border text-right">خصم</th>
+          </tr></thead>
+          <tbody>
+      `;
+
+      data.transactions.forEach(op => {
+        const isIn = op.type === "income";
+        const dateFormatted = new Date(op.date).toLocaleString('ar-EG', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        html += `<tr class="border-b hover:bg-gray-50">
+          <td class="p-3 border">${dateFormatted}</td>
+          <td class="p-3 border">${op.desc || '-'}</td>
+          <td class="p-3 border text-right ${isIn ? 'text-green-700 font-medium' : ''}">${isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
+          <td class="p-3 border text-right ${!isIn ? 'text-red-700 font-medium' : ''}">${!isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+        <div class="p-5 bg-green-50 rounded-xl">
+          <div class="text-green-700">إجمالي الإيداعات</div>
+          <div class="text-3xl font-bold text-green-700">${data.summary.income.toLocaleString('en-US')}</div>
+        </div>
+        <div class="p-5 bg-red-50 rounded-xl">
+          <div class="text-red-700">إجمالي المصروفات</div>
+          <div class="text-3xl font-bold text-red-700">${data.summary.expense.toLocaleString('en-US')}</div>
+        </div>
+        <div class="p-5 bg-blue-50 rounded-xl">
+          <div class="text-blue-700">الصافي</div>
+          <div class="text-3xl font-bold ${data.summary.net >= 0 ? 'text-green-700' : 'text-red-700'}">${data.summary.net.toLocaleString('en-US')}</div>
+        </div>
+      </div>`;
+    }
+
+    $('reportContent').innerHTML = html;
+    $('printArea').classList.remove('hidden');
+
+  } catch (err) {
+    console.error(err);
+    showToast("تعذر جلب التقرير من الشيت", true);
+  }
+}
+
+// ────────────────────────────────────────────────
+// مساعدات عامة
+// ────────────────────────────────────────────────
 function highlight(el) {
   el.classList.add('!border-red-500', '!ring-2', '!ring-red-500/40');
   setTimeout(() => el.classList.remove('!border-red-500', '!ring-2', '!ring-red-500/40'), 1800);
@@ -389,79 +453,27 @@ function showToast(message, isError = false, isImportant = false) {
   const toast = $('toast');
   const msg = $('toastMsg');
   msg.textContent = message;
-  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 ${isError ? 'bg-rose-700' : 'bg-emerald-600'} ${isImportant ? '!bg-amber-600' : ''}`;
+  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center no-print ${isError ? 'bg-rose-700' : 'bg-emerald-600'} ${isImportant ? '!bg-amber-600' : ''}`;
   toast.classList.remove('hidden');
   setTimeout(() => {
     toast.classList.add('opacity-0', 'translate-y-6');
     setTimeout(() => toast.classList.add('hidden'), 400);
-  }, 3500);
+  }, 3800);
 }
 
 function resetAll() {
-  if (!confirm("مسح كل البيانات المحلية نهائياً؟ (الشيت لا يتأثر)")) return;
+  if (!confirm("مسح كل البيانات المحلية نهائياً؟\n(الشيت لن يتأثر)")) return;
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 }
 
-async function showReport() {
-  const from = $('dateFrom').value;
-  const to = $('dateTo').value;
-  if (!from || !to) return showToast("حدد التاريخين", true);
-
-  try {
-    const response = await fetch(`${SCRIPT_URL}?from=${from}&to=${to}`);
-    const data = await response.json();
-
-    if (data.status === "error") {
-      showToast(data.message || "خطأ في التقرير", true);
-      return;
-    }
-
-    let html = data.totalRows ? '' : '<p class="text-center text-xl text-gray-600 py-12">لا توجد عمليات في الفترة المحددة</p>';
-
-    if (data.totalRows) {
-      let totalIn = data.summary.income;
-      let totalOut = data.summary.expense;
-      let net = data.summary.net;
-
-      html = `
-        <h2 class="text-2xl font-bold text-center mb-6">تقرير الصندوق<br><small class="text-gray-600">${from} ← ${to}</small></h2>
-        <table class="w-full border-collapse text-sm mb-8">
-          <thead><tr class="bg-gray-200"><th class="p-3 border">التاريخ</th><th class="p-3 border">الوصف</th><th class="p-3 border text-right">إيداع</th><th class="p-3 border text-right">خصم</th></tr></thead>
-          <tbody>
-      `;
-
-      data.transactions.forEach(op => {
-        const isIn = op.type === "income";
-        html += `<tr class="border-b hover:bg-gray-50">
-          <td class="p-3 border">${new Date(op.date).toLocaleString('ar-EG')}</td>
-          <td class="p-3 border">${op.desc || '-'}</td>
-          <td class="p-3 border text-right ${isIn ? 'text-green-700 font-medium' : ''}">${isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
-          <td class="p-3 border text-right ${!isIn ? 'text-red-700 font-medium' : ''}">${!isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
-        </tr>`;
-      });
-
-      html += `</tbody></table>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-        <div class="p-5 bg-green-50 rounded-xl"><div class="text-green-700">إجمالي الإيداعات</div><div class="text-3xl font-bold text-green-700">${totalIn.toLocaleString('en-US')}</div></div>
-        <div class="p-5 bg-red-50 rounded-xl"><div class="text-red-700">إجمالي المصروفات</div><div class="text-3xl font-bold text-red-700">${totalOut.toLocaleString('en-US')}</div></div>
-        <div class="p-5 bg-blue-50 rounded-xl"><div class="text-blue-700">الصافي</div><div class="text-3xl font-bold ${net>=0?'text-green-700':'text-red-700'}">${net.toLocaleString('en-US')}</div></div>
-      </div>`;
-    }
-
-    $('reportContent').innerHTML = html;
-    $('printArea').classList.remove('hidden');
-
-  } catch (err) {
-    console.error(err);
-    showToast("فشل جلب التقرير من الشيت", true);
-  }
-}
-
+// ────────────────────────────────────────────────
+// التهيئة
 // ────────────────────────────────────────────────
 window.addEventListener('load', loadData);
-$('amount').addEventListener('keypress', e => { if (e.key === 'Enter') addOperation(true); });
+$('amount').addEventListener('keypress', e => {
+  if (e.key === 'Enter') addOperation(true);
+});
 </script>
 
 </body>
