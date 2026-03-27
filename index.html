@@ -14,7 +14,7 @@
   <meta name="theme-color" content="#10b981">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&display=swap');
@@ -27,21 +27,29 @@
       margin: 0;
     }
 
-    .number { font-size: clamp(3.8rem, 14vw, 7rem); line-height: 1; font-weight: 900; letter-spacing: -0.05em; }
-    .force-latin-digits { font-variant-numeric: tabular-nums; direction: ltr; display: inline-block; unicode-bidi: embed; }
+    .number { 
+      font-size: clamp(3.8rem, 14vw, 7rem); 
+      line-height: 1; 
+      font-weight: 900; 
+      letter-spacing: -0.05em; 
+    }
+    .force-latin-digits { 
+      font-variant-numeric: tabular-nums; 
+      direction: ltr; 
+      display: inline-block; 
+      unicode-bidi: embed; 
+    }
 
     .toast { animation: toast-in 0.4s ease-out forwards; }
     @keyframes toast-in { from { transform: translate(-50%, 120%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
-    input[type=number], input[type=date] { -webkit-appearance: textfield; appearance: textfield; }
+    input[type=number], input[type=date] { 
+      -webkit-appearance: textfield; 
+      appearance: textfield; 
+    }
     input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-    @media print {
-      body * { visibility: hidden; }
-      #printArea, #printArea * { visibility: visible; }
-      #printArea { position: absolute; left: 0; top: 0; width: 100%; }
-      .no-print { display: none !important; }
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; margin: 0; 
     }
   </style>
 </head>
@@ -50,7 +58,7 @@
 <div class="max-w-lg mx-auto">
 
   <!-- Header -->
-  <header class="flex items-center justify-between mb-10 no-print">
+  <header class="flex items-center justify-between mb-10">
     <div class="flex items-center gap-3">
       <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center text-4xl shadow-xl shadow-emerald-600/40">💰</div>
       <div>
@@ -58,56 +66,72 @@
         <p class="text-emerald-400/90 text-base">+1500 يومياً</p>
       </div>
     </div>
-    <button onclick="location.reload()" class="text-blue-400/70 hover:text-blue-400 flex items-center gap-2 text-sm no-print">
+    <button onclick="location.reload()" class="text-blue-400/70 hover:text-blue-400 flex items-center gap-2 text-sm">
       <i class="fa-solid fa-rotate-right"></i> تحديث
     </button>
   </header>
 
   <!-- Balance Card -->
-  <section id="balanceCard" class="rounded-3xl p-10 text-center shadow-2xl border border-white/5 relative overflow-hidden mb-12 transition-all duration-500">
+  <section id="balanceCard" class="rounded-3xl p-10 text-center shadow-2xl border border-white/5 relative overflow-hidden mb-8 transition-all duration-500">
     <div id="glow" class="absolute inset-0 pointer-events-none opacity-30"></div>
     <div class="relative z-10">
-      <p class="text-zinc-400 text-base mb-2">الرصيد الحالي (من الشيت)</p>
+      <p class="text-zinc-400 text-base mb-2">الرصيد الحالي</p>
       <div id="balance" class="number font-black text-white force-latin-digits">0</div>
       <p class="text-sm text-zinc-500 mt-2">وحدة</p>
       <div id="statusBadge" class="mt-8 inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium"></div>
     </div>
   </section>
 
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-2 gap-4 mb-10">
+    <div class="bg-zinc-900/70 border border-emerald-900/30 rounded-3xl p-5 text-center">
+      <p class="text-emerald-400 text-sm mb-1">إجمالي الإيداعات</p>
+      <div id="totalIncome" class="text-3xl font-bold text-emerald-400 force-latin-digits">0</div>
+    </div>
+    <div class="bg-zinc-900/70 border border-red-900/30 rounded-3xl p-5 text-center">
+      <p class="text-red-400 text-sm mb-1">إجمالي الخصومات</p>
+      <div id="totalExpense" class="text-3xl font-bold text-red-400 force-latin-digits">0</div>
+    </div>
+  </div>
+
   <!-- Add Operation -->
-  <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-12 no-print">
+  <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-10">
     <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
       <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i> عملية جديدة
     </h2>
     <div class="space-y-6">
       <div>
         <label class="block text-zinc-300 mb-2 text-lg">الوصف</label>
-        <input id="desc" type="text" placeholder="راتب • فاتورة • بنزين ..." class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-4 text-lg outline-none transition-all">
+        <input id="desc" type="text" placeholder="راتب • فاتورة • بنزين ..." 
+               class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-4 text-lg outline-none transition-all">
       </div>
       <div>
         <label class="block text-zinc-300 mb-2 text-lg">المبلغ</label>
         <div class="relative">
-          <input id="amount" type="number" min="1" step="1" placeholder="0" class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none transition-all force-latin-digits">
+          <input id="amount" type="number" min="1" step="1" placeholder="0" 
+                 class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none transition-all force-latin-digits">
           <div class="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">وحدة</div>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-5 pt-4">
-        <button onclick="addOperation(true)" class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-red-700/30 active:scale-95 transition flex items-center justify-center gap-3">
+        <button onclick="addOperation(true)" id="expenseBtn"
+                class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-red-700/30 active:scale-95 transition flex items-center justify-center gap-3">
           <i class="fa-solid fa-minus"></i> خصم
         </button>
-        <button onclick="addOperation(false)" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-emerald-600/30 active:scale-95 transition flex items-center justify-center gap-3">
+        <button onclick="addOperation(false)" id="incomeBtn"
+                class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-emerald-600/30 active:scale-95 transition flex items-center justify-center gap-3">
           <i class="fa-solid fa-plus"></i> إيداع
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Report Section -->
-  <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-12">
-    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3 no-print">
-      <i class="fa-solid fa-chart-line text-blue-400"></i> تقرير الفترة
+  <!-- Filter Section -->
+  <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-10">
+    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
+      <i class="fa-solid fa-filter text-blue-400"></i> فلتر الفترة
     </h2>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6 no-print">
+    <div class="grid grid-cols-2 gap-4 mb-6">
       <div>
         <label class="block text-zinc-300 mb-2">من تاريخ</label>
         <input type="date" id="dateFrom" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
@@ -116,35 +140,32 @@
         <label class="block text-zinc-300 mb-2">إلى تاريخ</label>
         <input type="date" id="dateTo" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
       </div>
-      <div class="flex items-end">
-        <button onclick="showReport()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition">
-          <i class="fa-solid fa-file-lines"></i> عرض التقرير
-        </button>
-      </div>
     </div>
-
-    <div id="printArea" class="hidden bg-white text-black p-6 rounded-xl shadow-inner" dir="rtl">
-      <div id="reportContent"></div>
-      <div class="mt-10 text-center no-print">
-        <button onclick="window.print()" class="bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg transition flex items-center justify-center gap-3 mx-auto">
-          <i class="fa-solid fa-print"></i> طباعة
-        </button>
-      </div>
+    <div class="flex gap-3">
+      <button onclick="applyFilter()" 
+              class="flex-1 bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-check"></i> تطبيق الفلتر
+      </button>
+      <button onclick="clearFilter()" 
+              class="flex-1 bg-zinc-700 hover:bg-zinc-600 py-4 rounded-2xl font-bold text-lg transition">
+        إظهار الكل
+      </button>
     </div>
   </section>
 
   <!-- History -->
-  <section class="no-print">
+  <section>
     <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3 px-1">
-      <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> سجل العمليات (من الشيت)
+      <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> 
+      سجل العمليات <span id="filterStatus" class="text-sm font-normal text-zinc-500"></span>
     </h2>
-    <div id="historyList" class="space-y-4 max-h-[40vh] overflow-y-auto pr-2 pb-4"></div>
+    <div id="historyList" class="space-y-4 max-h-[45vh] overflow-y-auto pr-2 pb-4"></div>
   </section>
 
 </div>
 
 <!-- Toast -->
-<div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[300px] justify-center no-print">
+<div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center">
   <i class="fa-solid fa-circle-check text-xl"></i>
   <span id="toastMsg"></span>
 </div>
@@ -153,29 +174,48 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeZhOfSMqt7hCceyWWtHePfCahIm-ZMkMexxtUpw_HtCXVJ-xj9bga2rjO9CXUJ0EJjQ/exec";
 
 let balance = 0;
+let totalIncome = 0;
+let totalExpense = 0;
 let records = [];
+let currentFilter = null; // {from, to}
 
 function $(id) { return document.getElementById(id); }
 
-async function loadFromSheet(silent = false) {
+async function loadFromSheet(filter = null, silent = false) {
   try {
-    if (!silent) showToast("جاري التحميل من الشيت...", false, true);
+    if (!silent) showToast("جاري التحميل...", false, true);
 
-    const res = await fetch(SCRIPT_URL);
+    let url = SCRIPT_URL;
+    if (filter) {
+      url += `?from=${filter.from}&to=${filter.to}`;
+    }
+
+    const res = await fetch(url);
     const data = await res.json();
 
     if (data.status !== "success") throw new Error(data.message || "خطأ");
 
     balance = data.summary.net || 0;
+    totalIncome = data.summary.income || 0;
+    totalExpense = data.summary.expense || 0;
+
     records = data.transactions.map(op => ({
       type: op.type,
       amount: op.amount,
       desc: op.desc,
-      date: new Date(op.date).toLocaleString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      date: new Date(op.date).toLocaleString('ar-EG', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })
     }));
 
+    currentFilter = filter;
     renderAll();
-    if (!silent) showToast("تم التحميل", false);
+    
+    if (!silent) showToast(filter ? "تم تطبيق الفلتر" : "تم التحميل", false);
 
   } catch (err) {
     console.error(err);
@@ -195,15 +235,24 @@ function updateBalanceUI() {
   else                       { gradient = "from-rose-900   to-rose-700";    statusText = "في دين";    badgeClass = "bg-rose-800/60 text-rose-100 border border-rose-600 animate-pulse"; }
 
   $('balanceCard').style.background = `linear-gradient(135deg, ${gradient})`;
-  $('glow').style.background = balance < 0 ? `radial-gradient(circle at 50% 30%, rgba(244,63,94,0.35), transparent 70%)` : `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%)`;
+  $('glow').style.background = balance < 0 ? 
+    `radial-gradient(circle at 50% 30%, rgba(244,63,94,0.35), transparent 70%)` : 
+    `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%)`;
 
   $('statusBadge').textContent = statusText;
   $('statusBadge').className = `mt-8 inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium ${badgeClass}`;
 }
 
+function updateSummaryUI() {
+  $('totalIncome').textContent = totalIncome.toLocaleString('en-US');
+  $('totalExpense').textContent = totalExpense.toLocaleString('en-US');
+}
+
 function renderHistory() {
   const cont = $('historyList');
-  cont.innerHTML = records.length ? "" : '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات بعد...</div>';
+  cont.innerHTML = records.length 
+    ? "" 
+    : '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات في هذه الفترة</div>';
 
   records.forEach(op => {
     const isIncome = op.type === "income";
@@ -220,21 +269,42 @@ function renderHistory() {
         </div>
       </div>
     `;
-    cont.prepend(div);
+    cont.prepend(div);   // الأحدث في الأعلى
   });
+
+  // تحديث حالة الفلتر
+  const status = $('filterStatus');
+  if (currentFilter) {
+    status.textContent = `(${currentFilter.from} ← ${currentFilter.to})`;
+  } else {
+    status.textContent = "(جميع العمليات)";
+  }
 }
 
 function renderAll() {
   updateBalanceUI();
+  updateSummaryUI();
   renderHistory();
 }
 
+// إضافة عملية جديدة
 async function addOperation(isExpense) {
   const desc = $('desc').value.trim();
   const amount = Number($('amount').value);
 
   if (!desc) return highlight($('desc'));
   if (!amount || amount <= 0) return highlight($('amount'));
+
+  // تعطيل الأزرار وإظهار التحميل
+  const expenseBtn = $('expenseBtn');
+  const incomeBtn = $('incomeBtn');
+  const originalExpenseText = expenseBtn.innerHTML;
+  const originalIncomeText = incomeBtn.innerHTML;
+
+  expenseBtn.disabled = true;
+  incomeBtn.disabled = true;
+  expenseBtn.innerHTML = isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i> جاري...` : originalExpenseText;
+  incomeBtn.innerHTML = !isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i> جاري...` : originalIncomeText;
 
   const payload = {
     type: isExpense ? "expense" : "income",
@@ -246,22 +316,28 @@ async function addOperation(isExpense) {
   try {
     await fetch(SCRIPT_URL, {
       method: "POST",
-      mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
+
+    showToast(isExpense ? `تم خصم ${amount.toLocaleString('en-US')} ✓` : `تم إيداع ${amount.toLocaleString('en-US')} ✓`);
+
+    $('desc').value = "";
+    $('amount').value = "";
+
+    // إعادة تحميل البيانات (مع الفلتر الحالي إن وجد)
+    await loadFromSheet(currentFilter, true);
+
   } catch (err) {
-    console.warn(err);
-    showToast("تم الحفظ محلياً فقط", true);
+    console.error(err);
+    showToast("فشل في حفظ العملية، حاول مرة أخرى", true);
+  } finally {
+    // إعادة تفعيل الأزرار
+    expenseBtn.disabled = false;
+    incomeBtn.disabled = false;
+    expenseBtn.innerHTML = originalExpenseText;
+    incomeBtn.innerHTML = originalIncomeText;
   }
-
-  showToast(isExpense ? `تم خصم ${amount.toLocaleString('en-US')} ✓` : `تم إيداع ${amount.toLocaleString('en-US')} ✓`);
-
-  $('desc').value = "";
-  $('amount').value = "";
-
-  // تحديث بعد 1.5 ثانية لإعطاء وقت للشيت
-  setTimeout(() => loadFromSheet(true), 1500);
 }
 
 function highlight(el) {
@@ -274,66 +350,46 @@ function showToast(message, isError = false, isImportant = false) {
   const toast = $('toast');
   const msg = $('toastMsg');
   msg.textContent = message;
-  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center no-print ${isError ? 'bg-rose-700' : 'bg-emerald-600'} ${isImportant ? '!bg-amber-600' : ''}`;
+  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center 
+    ${isError ? 'bg-rose-700' : 'bg-emerald-600'} 
+    ${isImportant ? '!bg-amber-600' : ''}`;
   toast.classList.remove('hidden');
+  
   setTimeout(() => {
     toast.classList.add('opacity-0', 'translate-y-6');
     setTimeout(() => toast.classList.add('hidden'), 400);
   }, 3800);
 }
 
-async function showReport() {
+async function applyFilter() {
   const from = $('dateFrom').value;
-  const to   = $('dateTo').value;
-  if (!from || !to) return showToast("حدد التاريخين", true);
-
-  try {
-    const url = `${SCRIPT_URL}?from=${from}&to=${to}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.status === "error") throw new Error(data.message);
-
-    let html = data.totalRows ? '' : '<p class="text-center text-xl text-gray-600 py-12">لا توجد عمليات في الفترة</p>';
-
-    if (data.totalRows) {
-      html = `
-        <h2 class="text-2xl font-bold text-center mb-6">تقرير الصندوق<br><small class="text-gray-600">${from} ← ${to}</small></h2>
-        <table class="w-full border-collapse text-sm mb-8">
-          <thead><tr class="bg-gray-200"><th class="p-3 border">التاريخ</th><th class="p-3 border">الوصف</th><th class="p-3 border text-right">إيداع</th><th class="p-3 border text-right">خصم</th></tr></thead>
-          <tbody>
-      `;
-      data.transactions.forEach(op => {
-        const isIn = op.type === "income";
-        const dateStr = new Date(op.date).toLocaleString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        html += `<tr class="border-b hover:bg-gray-50">
-          <td class="p-3 border">${dateStr}</td>
-          <td class="p-3 border">${op.desc || '-'}</td>
-          <td class="p-3 border text-right ${isIn?'text-green-700 font-medium':''}">${isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
-          <td class="p-3 border text-right ${!isIn?'text-red-700 font-medium':''}">${!isIn ? op.amount.toLocaleString('en-US') : '-'}</td>
-        </tr>`;
-      });
-      html += `</tbody></table>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-        <div class="p-5 bg-green-50 rounded-xl"><div class="text-green-700">إجمالي الإيداعات</div><div class="text-3xl font-bold text-green-700">${data.summary.income.toLocaleString('en-US')}</div></div>
-        <div class="p-5 bg-red-50 rounded-xl"><div class="text-red-700">إجمالي المصروفات</div><div class="text-3xl font-bold text-red-700">${data.summary.expense.toLocaleString('en-US')}</div></div>
-        <div class="p-5 bg-blue-50 rounded-xl"><div class="text-blue-700">الصافي</div><div class="text-3xl font-bold ${data.summary.net>=0?'text-green-700':'text-red-700'}">${data.summary.net.toLocaleString('en-US')}</div></div>
-      </div>`;
-    }
-
-    $('reportContent').innerHTML = html;
-    $('printArea').classList.remove('hidden');
-
-  } catch (err) {
-    console.error(err);
-    showToast("فشل جلب التقرير", true);
+  const to = $('dateTo').value;
+  
+  if (!from || !to) {
+    return showToast("يرجى اختيار تاريخ البداية والنهاية", true);
   }
+  
+  await loadFromSheet({ from, to });
 }
 
-// ────────────────────────────────────────────────
-window.addEventListener('load', () => loadFromSheet());
-$('amount').addEventListener('keypress', e => { if (e.key === 'Enter') addOperation(true); });
+function clearFilter() {
+  $('dateFrom').value = "";
+  $('dateTo').value = "";
+  loadFromSheet(null);
+}
+
+// تشغيل التطبيق
+window.addEventListener('load', () => {
+  // تعيين تاريخ اليوم افتراضياً في الفلتر (اختياري)
+  const today = new Date().toISOString().split('T')[0];
+  $('dateTo').value = today;
+  
+  loadFromSheet();
+});
+
+$('amount').addEventListener('keypress', e => { 
+  if (e.key === 'Enter') addOperation(false); 
+});
 </script>
 </body>
 </html>
