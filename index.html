@@ -42,15 +42,6 @@
 
     .toast { animation: toast-in 0.4s ease-out forwards; }
     @keyframes toast-in { from { transform: translate(-50%, 120%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
-
-    input[type=number], input[type=date] { 
-      -webkit-appearance: textfield; 
-      appearance: textfield; 
-    }
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; margin: 0; 
-    }
   </style>
 </head>
 <body class="pb-24 pt-6 px-4 sm:px-6">
@@ -72,7 +63,7 @@
   </header>
 
   <!-- Balance Card -->
-  <section id="balanceCard" class="rounded-3xl p-10 text-center shadow-2xl border border-white/5 relative overflow-hidden mb-8 transition-all duration-500">
+  <section id="balanceCard" class="rounded-3xl p-10 text-center shadow-2xl border border-white/5 relative overflow-hidden mb-8">
     <div id="glow" class="absolute inset-0 pointer-events-none opacity-30"></div>
     <div class="relative z-10">
       <p class="text-zinc-400 text-base mb-2">الرصيد الحالي</p>
@@ -103,30 +94,30 @@
       <div>
         <label class="block text-zinc-300 mb-2 text-lg">الوصف</label>
         <input id="desc" type="text" placeholder="راتب • فاتورة • بنزين ..." 
-               class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-4 text-lg outline-none transition-all">
+               class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-4 text-lg outline-none">
       </div>
       <div>
         <label class="block text-zinc-300 mb-2 text-lg">المبلغ</label>
         <div class="relative">
           <input id="amount" type="number" min="1" step="1" placeholder="0" 
-                 class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none transition-all force-latin-digits">
-          <div class="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none">وحدة</div>
+                 class="w-full bg-zinc-800/60 border border-zinc-700 focus:border-emerald-500 rounded-2xl px-5 py-6 text-5xl font-bold text-center outline-none force-latin-digits">
+          <div class="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500">وحدة</div>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-5 pt-4">
         <button onclick="addOperation(true)" id="expenseBtn"
-                class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-red-700/30 active:scale-95 transition flex items-center justify-center gap-3">
+                class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 py-5 rounded-2xl font-bold text-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-3">
           <i class="fa-solid fa-minus"></i> خصم
         </button>
         <button onclick="addOperation(false)" id="incomeBtn"
-                class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-5 rounded-2xl font-bold text-xl shadow-lg shadow-emerald-600/30 active:scale-95 transition flex items-center justify-center gap-3">
+                class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 py-5 rounded-2xl font-bold text-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-3">
           <i class="fa-solid fa-plus"></i> إيداع
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Filter Section -->
+  <!-- Filter -->
   <section class="bg-zinc-900/70 border border-zinc-800 rounded-3xl p-8 shadow-xl mb-10">
     <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
       <i class="fa-solid fa-filter text-blue-400"></i> فلتر الفترة
@@ -134,20 +125,18 @@
     <div class="grid grid-cols-2 gap-4 mb-6">
       <div>
         <label class="block text-zinc-300 mb-2">من تاريخ</label>
-        <input type="date" id="dateFrom" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
+        <input type="date" id="dateFrom" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3">
       </div>
       <div>
         <label class="block text-zinc-300 mb-2">إلى تاريخ</label>
-        <input type="date" id="dateTo" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white">
+        <input type="date" id="dateTo" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3">
       </div>
     </div>
     <div class="flex gap-3">
-      <button onclick="applyFilter()" 
-              class="flex-1 bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-check"></i> تطبيق الفلتر
+      <button onclick="applyFilter()" class="flex-1 bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-bold text-lg transition">
+        تطبيق الفلتر
       </button>
-      <button onclick="clearFilter()" 
-              class="flex-1 bg-zinc-700 hover:bg-zinc-600 py-4 rounded-2xl font-bold text-lg transition">
+      <button onclick="clearFilter()" class="flex-1 bg-zinc-700 hover:bg-zinc-600 py-4 rounded-2xl font-bold text-lg transition">
         إظهار الكل
       </button>
     </div>
@@ -155,18 +144,18 @@
 
   <!-- History -->
   <section>
-    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3 px-1">
+    <h2 class="text-2xl font-semibold mb-6 flex items-center gap-3">
       <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> 
       سجل العمليات <span id="filterStatus" class="text-sm font-normal text-zinc-500"></span>
     </h2>
-    <div id="historyList" class="space-y-4 max-h-[45vh] overflow-y-auto pr-2 pb-4"></div>
+    <div id="historyList" class="space-y-4 max-h-[45vh] overflow-y-auto pr-2 pb-6"></div>
   </section>
 
 </div>
 
 <!-- Toast -->
 <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center">
-  <i class="fa-solid fa-circle-check text-xl"></i>
+  <i id="toastIcon" class="fa-solid fa-circle-check text-xl"></i>
   <span id="toastMsg"></span>
 </div>
 
@@ -177,7 +166,7 @@ let balance = 0;
 let totalIncome = 0;
 let totalExpense = 0;
 let records = [];
-let currentFilter = null; // {from, to}
+let currentFilter = null;
 
 function $(id) { return document.getElementById(id); }
 
@@ -186,7 +175,7 @@ async function loadFromSheet(filter = null, silent = false) {
     if (!silent) showToast("جاري التحميل...", false, true);
 
     let url = SCRIPT_URL;
-    if (filter) {
+    if (filter && filter.from && filter.to) {
       url += `?from=${filter.from}&to=${filter.to}`;
     }
 
@@ -198,23 +187,11 @@ async function loadFromSheet(filter = null, silent = false) {
     balance = data.summary.net || 0;
     totalIncome = data.summary.income || 0;
     totalExpense = data.summary.expense || 0;
-
-    records = data.transactions.map(op => ({
-      type: op.type,
-      amount: op.amount,
-      desc: op.desc,
-      date: new Date(op.date).toLocaleString('ar-EG', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
-    }));
+    records = data.transactions || [];
 
     currentFilter = filter;
     renderAll();
-    
+
     if (!silent) showToast(filter ? "تم تطبيق الفلتر" : "تم التحميل", false);
 
   } catch (err) {
@@ -227,17 +204,16 @@ function updateBalanceUI() {
   $('balance').textContent = balance.toLocaleString('en-US');
 
   let gradient, statusText, badgeClass;
-
   if      (balance >= 40000) { gradient = "from-emerald-700 to-emerald-500"; statusText = "ممتاز";    badgeClass = "bg-emerald-600/40 text-emerald-100 border border-emerald-500/50"; }
   else if (balance >= 20000) { gradient = "from-emerald-600 to-emerald-400"; statusText = "جيد جداً"; badgeClass = "bg-emerald-500/30 text-emerald-100 border border-emerald-400/40"; }
-  else if (balance >=  8000) { gradient = "from-amber-600   to-amber-400";   statusText = "متوسط";    badgeClass = "bg-amber-500/30 text-amber-100 border border-amber-400/40"; }
-  else if (balance >=     0) { gradient = "from-red-700    to-red-500";     statusText = "منخفض";    badgeClass = "bg-red-600/40 text-red-100 border border-red-500/50"; }
-  else                       { gradient = "from-rose-900   to-rose-700";    statusText = "في دين";    badgeClass = "bg-rose-800/60 text-rose-100 border border-rose-600 animate-pulse"; }
+  else if (balance >=  8000) { gradient = "from-amber-600 to-amber-400";     statusText = "متوسط";    badgeClass = "bg-amber-500/30 text-amber-100 border border-amber-400/40"; }
+  else if (balance >=     0) { gradient = "from-red-700 to-red-500";         statusText = "منخفض";    badgeClass = "bg-red-600/40 text-red-100 border border-red-500/50"; }
+  else                       { gradient = "from-rose-900 to-rose-700";       statusText = "في دين";    badgeClass = "bg-rose-800/60 text-rose-100 border border-rose-600 animate-pulse"; }
 
   $('balanceCard').style.background = `linear-gradient(135deg, ${gradient})`;
-  $('glow').style.background = balance < 0 ? 
-    `radial-gradient(circle at 50% 30%, rgba(244,63,94,0.35), transparent 70%)` : 
-    `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%)`;
+  $('glow').style.background = balance < 0 
+    ? `radial-gradient(circle at 50% 30%, rgba(244,63,94,0.35), transparent 70%)` 
+    : `radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%)`;
 
   $('statusBadge').textContent = statusText;
   $('statusBadge').className = `mt-8 inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-medium ${badgeClass}`;
@@ -250,11 +226,17 @@ function updateSummaryUI() {
 
 function renderHistory() {
   const cont = $('historyList');
-  cont.innerHTML = records.length 
-    ? "" 
-    : '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات في هذه الفترة</div>';
+  cont.innerHTML = "";
 
-  records.forEach(op => {
+  if (records.length === 0) {
+    cont.innerHTML = '<div class="text-center py-16 text-zinc-600 text-lg">لا توجد عمليات في هذه الفترة</div>';
+    return;
+  }
+
+  // ترتيب احتياطي: الأحدث أولاً
+  const sorted = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  sorted.forEach(op => {
     const isIncome = op.type === "income";
     const div = document.createElement("div");
     div.className = `flex justify-between items-center bg-zinc-900/60 border ${isIncome ? 'border-emerald-900/40' : 'border-red-900/40'} rounded-2xl p-5`;
@@ -269,16 +251,12 @@ function renderHistory() {
         </div>
       </div>
     `;
-    cont.prepend(div);   // الأحدث في الأعلى
+    cont.appendChild(div);
   });
 
-  // تحديث حالة الفلتر
-  const status = $('filterStatus');
-  if (currentFilter) {
-    status.textContent = `(${currentFilter.from} ← ${currentFilter.to})`;
-  } else {
-    status.textContent = "(جميع العمليات)";
-  }
+  $('filterStatus').textContent = currentFilter 
+    ? `(${currentFilter.from} ← ${currentFilter.to})` 
+    : "(جميع العمليات)";
 }
 
 function renderAll() {
@@ -287,7 +265,6 @@ function renderAll() {
   renderHistory();
 }
 
-// إضافة عملية جديدة
 async function addOperation(isExpense) {
   const desc = $('desc').value.trim();
   const amount = Number($('amount').value);
@@ -295,48 +272,42 @@ async function addOperation(isExpense) {
   if (!desc) return highlight($('desc'));
   if (!amount || amount <= 0) return highlight($('amount'));
 
-  // تعطيل الأزرار وإظهار التحميل
   const expenseBtn = $('expenseBtn');
   const incomeBtn = $('incomeBtn');
-  const originalExpenseText = expenseBtn.innerHTML;
-  const originalIncomeText = incomeBtn.innerHTML;
+  const origExp = expenseBtn.innerHTML;
+  const origInc = incomeBtn.innerHTML;
 
-  expenseBtn.disabled = true;
-  incomeBtn.disabled = true;
-  expenseBtn.innerHTML = isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i> جاري...` : originalExpenseText;
-  incomeBtn.innerHTML = !isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i> جاري...` : originalIncomeText;
-
-  const payload = {
-    type: isExpense ? "expense" : "income",
-    amount,
-    desc,
-    date: new Date().toISOString()
-  };
+  expenseBtn.disabled = incomeBtn.disabled = true;
+  expenseBtn.innerHTML = isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i>` : origExp;
+  incomeBtn.innerHTML = !isExpense ? `<i class="fa-solid fa-spinner fa-spin"></i>` : origInc;
 
   try {
+    const payload = {
+      type: isExpense ? "expense" : "income",
+      amount: amount,
+      desc: desc,
+      date: new Date().toISOString()
+    };
+
     await fetch(SCRIPT_URL, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify(payload)
     });
 
-    showToast(isExpense ? `تم خصم ${amount.toLocaleString('en-US')} ✓` : `تم إيداع ${amount.toLocaleString('en-US')} ✓`);
+    showToast(isExpense ? `تم خصم ${amount.toLocaleString('en-US')}` : `تم إيداع ${amount.toLocaleString('en-US')}`);
 
     $('desc').value = "";
     $('amount').value = "";
 
-    // إعادة تحميل البيانات (مع الفلتر الحالي إن وجد)
     await loadFromSheet(currentFilter, true);
 
   } catch (err) {
-    console.error(err);
-    showToast("فشل في حفظ العملية، حاول مرة أخرى", true);
+    showToast("فشل في الحفظ، حاول مرة أخرى", true);
   } finally {
-    // إعادة تفعيل الأزرار
-    expenseBtn.disabled = false;
-    incomeBtn.disabled = false;
-    expenseBtn.innerHTML = originalExpenseText;
-    incomeBtn.innerHTML = originalIncomeText;
+    expenseBtn.disabled = incomeBtn.disabled = false;
+    expenseBtn.innerHTML = origExp;
+    incomeBtn.innerHTML = origInc;
   }
 }
 
@@ -346,29 +317,18 @@ function highlight(el) {
   el.focus();
 }
 
-function showToast(message, isError = false, isImportant = false) {
+function showToast(message, isError = false) {
   const toast = $('toast');
-  const msg = $('toastMsg');
-  msg.textContent = message;
-  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center 
-    ${isError ? 'bg-rose-700' : 'bg-emerald-600'} 
-    ${isImportant ? '!bg-amber-600' : ''}`;
+  $('toastMsg').textContent = message;
+  toast.className = `fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl text-white font-medium shadow-2xl flex items-center gap-3 z-50 min-w-[280px] justify-center ${isError ? 'bg-rose-700' : 'bg-emerald-600'}`;
   toast.classList.remove('hidden');
-  
-  setTimeout(() => {
-    toast.classList.add('opacity-0', 'translate-y-6');
-    setTimeout(() => toast.classList.add('hidden'), 400);
-  }, 3800);
+  setTimeout(() => toast.classList.add('hidden'), 4000);
 }
 
 async function applyFilter() {
   const from = $('dateFrom').value;
   const to = $('dateTo').value;
-  
-  if (!from || !to) {
-    return showToast("يرجى اختيار تاريخ البداية والنهاية", true);
-  }
-  
+  if (!from || !to) return showToast("اختر تاريخ البداية والنهاية", true);
   await loadFromSheet({ from, to });
 }
 
@@ -380,15 +340,13 @@ function clearFilter() {
 
 // تشغيل التطبيق
 window.addEventListener('load', () => {
-  // تعيين تاريخ اليوم افتراضياً في الفلتر (اختياري)
   const today = new Date().toISOString().split('T')[0];
   $('dateTo').value = today;
-  
   loadFromSheet();
 });
 
-$('amount').addEventListener('keypress', e => { 
-  if (e.key === 'Enter') addOperation(false); 
+$('amount').addEventListener('keypress', e => {
+  if (e.key === 'Enter') addOperation(false);
 });
 </script>
 </body>
