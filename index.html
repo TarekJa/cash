@@ -233,17 +233,32 @@ function renderHistory() {
     return;
   }
 
-  // ترتيب احتياطي: الأحدث أولاً
+  // ترتيب: الأحدث أولاً
   const sorted = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   sorted.forEach(op => {
     const isIncome = op.type === "income";
+    
+    // تحويل التاريخ إلى الصيغة المطلوبة: YYYY/MM/DD - HH:MM
+    let displayDate = "تاريخ غير معروف";
+    if (op.date) {
+      const dateObj = new Date(op.date);
+      
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      
+      displayDate = `${year}/${month}/${day} - ${hours}:${minutes}`;
+    }
+
     const div = document.createElement("div");
     div.className = `flex justify-between items-center bg-zinc-900/60 border ${isIncome ? 'border-emerald-900/40' : 'border-red-900/40'} rounded-2xl p-5`;
     div.innerHTML = `
       <div class="flex-1">
         <div class="font-medium text-lg ${isIncome ? 'text-emerald-300' : 'text-red-300'}">${op.desc || 'بدون وصف'}</div>
-        <div class="text-sm text-zinc-500 mt-1">${op.date}</div>
+        <div class="text-sm text-zinc-500 mt-1">${displayDate}</div>
       </div>
       <div class="text-right force-latin-digits">
         <div class="text-3xl font-bold ${isIncome ? 'text-emerald-400' : 'text-red-400'}">
